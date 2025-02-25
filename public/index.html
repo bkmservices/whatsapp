@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion WhatsApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <h2>Connexion WhatsApp</h2>
+    <label>Numéro de téléphone :</label>
+    <input type="text" id="phone" placeholder="Ex: 2250102030405">
+    <button onclick="startSession()">Scanner le QR</button>
+    <br><br>
+    <img id="qrImage" style="display:none; width:300px; height:300px;">
+
+    <script>
+        async function startSession() {
+            const phone = document.getElementById('phone').value;
+            if (!phone) {
+                Swal.fire('Erreur', 'Veuillez entrer un numéro', 'error');
+                return;
+            }
+
+            const response = await fetch('/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone })
+            });
+
+            const data = await response.json();
+            if (data.qr) {
+                document.getElementById('qrImage').src = data.qr;
+                document.getElementById('qrImage').style.display = 'block';
+            } else {
+                Swal.fire('Info', data.message, 'info');
+            }
+        }
+    </script>
+</body>
+</html>
